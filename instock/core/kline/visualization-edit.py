@@ -21,7 +21,7 @@ __author__ = 'myh '
 __date__ = '2023/4/6 '
 
 
-def get_plot_kline(code, stock, date, stock_name):
+def get_plot_kline(code, stock, date,cname):
     plot_list = []
     threshold = 360
     try:
@@ -84,7 +84,7 @@ def get_plot_kline(code, stock, date, stock_name):
         # 形态信息
         pattern_is_show = False # 形态缺省是否显示
         checkboxes_args = {}
-        checkboxes_code = """let acts = cb_obj.active;"""
+        checkboxes_code = """var acts = cb_obj.active;"""
         pattern_labels = []
         i = 0
         for k in stock_column:
@@ -190,15 +190,18 @@ def get_plot_kline(code, stock, date, stock_name):
             code_name = f"SH{code}"
         else:
             code_name = f"SZ{code}"
+        # div_cname = Div(
+        #     text=f"""<a href="https://quote.eastmoney.com/{code_name}.html" target="_blank">{cname}</a>""",
+        #     width=80)
         div_dfcf_hq = Div(
-            text=f"""<a href="https://quote.eastmoney.com/{code_name}.html" target="_blank">{code}&nbsp;{stock_name}-行情</a>""",
-            width=150)
+            text=f"""<a href="https://quote.eastmoney.com/{code_name}.html" target="_blank">{cname}</a>""",
+            width=80)
         if code.startswith(('1', '5')):
             div_dfcf_zl = Div()
         else:
             div_dfcf_zl = Div(
-                text=f"""<a href="https://emweb.eastmoney.com/PC_HSF10/OperationsRequired/Index?code={code_name}" target="_blank">{code}&nbsp;{stock_name}-资料</a>""",
-                width=150)
+                text=f"""<a href="https://emweb.eastmoney.com/PC_HSF10/OperationsRequired/Index?code={code_name}" target="_blank">{code}资料</a>""",
+                width=80)
         div_dfcf_pr = Div(
             text=f"""<a href="https://www.ljjyy.com/archives/2023/04/100718.html" target="_blank">K线形态解读</a>""",
             width=80)

@@ -19,7 +19,7 @@ class GetDataIndicatorsHandler(webBase.BaseHandler, ABC):
     def get(self):
         code = self.get_argument("code", default=None, strip=False)
         date = self.get_argument("date", default=None, strip=False)
-        name = self.get_argument("name", default=None, strip=False)
+        cname = self.get_argument("cname", default=None, strip=False)
         comp_list = []
         try:
             if code.startswith(('1', '5')):
@@ -29,7 +29,7 @@ class GetDataIndicatorsHandler(webBase.BaseHandler, ABC):
             if stock is None:
                 return
 
-            pk = vis.get_plot_kline(code, stock, date, name)
+            pk = vis.get_plot_kline(code, stock, date,cname)
             if pk is None:
                 return
 
@@ -38,6 +38,7 @@ class GetDataIndicatorsHandler(webBase.BaseHandler, ABC):
             logging.error(f"dataIndicatorsHandler.GetDataIndicatorsHandler处理异常：{e}")
 
         self.render("stock_indicators.html", comp_list=comp_list,
+                    stockVersion=version.__version__,
                     leftMenu=webBase.GetLeftMenu(self.request.uri))
 
 

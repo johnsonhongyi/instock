@@ -29,7 +29,7 @@ class GetStockHtmlHandler(webBase.BaseHandler, ABC):
     def get(self):
         name = self.get_argument("table_name", default=None, strip=False)
         web_module_data = sswmd.stock_web_module_data().get_data(name)
-        run_date, run_date_nph = trd.get_trade_date_last()
+        run_date, run_date_nph = trd.get_trade_date_last(websrv=True)
         if web_module_data.is_realtime:
             date_now_str = run_date_nph.strftime("%Y-%m-%d")
         else:
@@ -104,7 +104,7 @@ class GetStockDataHandler(webBase.BaseHandler, ABC):
         order_by_sql = ""
         # 增加排序。
         if len(order_by_column) != 0 and len(order_by_dir) != 0:
-            order_by_sql = " ORDER BY "
+            order_by_sql = "  ORDER BY "
             idx = 0
             for key in order_by_column:
                 # 找到排序字段和dir。
@@ -115,20 +115,12 @@ class GetStockDataHandler(webBase.BaseHandler, ABC):
                 else:
                     order_by_sql = f"{order_by_sql} `{col_tmp}` {dir_tmp}"
                 idx += 1
-
-        if order_by_sql == "":
-            if web_module_data.order_by is not None:
-                order_by_sql = f" ORDER BY {web_module_data.order_by}"
-
         # 查询数据库。
         limit_sql = ""
         if int(length_param) > 0:
             limit_sql = " LIMIT %s , %s " % (start_param, length_param)
-        order_columns = ""
-        if web_module_data.order_columns is not None:
-            order_columns = f",{web_module_data.order_columns}"
-        sql = f"SELECT *{order_columns} FROM `{web_module_data.table_name}`{search_sql}{order_by_sql}{limit_sql}"
-        count_sql = f"SELECT count(1) as num FROM `{web_module_data.table_name}`{search_sql}"
+        sql = " SELECT * FROM `%s` %s %s %s " % (web_module_data.table_name, search_sql, order_by_sql, limit_sql)
+        count_sql = " SELECT count(1) as num FROM `%s` %s " % (web_module_data.table_name, search_sql)
 
         stock_web_list = self.db.query(sql)
         stock_web_size = self.db.query(count_sql)

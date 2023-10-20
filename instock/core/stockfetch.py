@@ -121,20 +121,6 @@ def fetch_stocks_fund_flow(index):
     return None
 
 
-# 读取板块资金流向
-def fetch_stocks_sector_fund_flow(index_sector, index_indicator):
-    try:
-        cn_flow = tbs.CN_STOCK_SECTOR_FUND_FLOW[1][index_indicator]
-        data = sff.stock_sector_fund_flow_rank(indicator=cn_flow['cn'], sector_type=tbs.CN_STOCK_SECTOR_FUND_FLOW[0][index_sector])
-        if data is None or len(data.index) == 0:
-            return None
-        data.columns = list(cn_flow['columns'])
-        return data
-    except Exception as e:
-        logging.error(f"stockfetch.fetch_stocks_sector_fund_flow处理异常：{e}")
-    return None
-
-
 # 读取股票分红配送
 def fetch_stocks_bonus(date):
     try:
@@ -248,7 +234,6 @@ def fetch_etf_hist(data_base, date_start=None, date_end=None, adjust='qfq'):
         data = data.sort_index()  # 将数据按照日期排序下。
         if data is not None:
             data.loc[:, 'p_change'] = tl.ROC(data['close'].values, 1)
-            data['p_change'].values[np.isnan(data['p_change'].values)] = 0.0
             data["volume"] = data['volume'].values.astype('double') * 100  # 成交量单位从手变成股。
         return data
     except Exception as e:
@@ -268,7 +253,6 @@ def fetch_stock_hist(data_base, date_start=None, is_cache=True):
         data = stock_hist_cache(code, date_start, None, is_cache, 'qfq')
         if data is not None:
             data.loc[:, 'p_change'] = tl.ROC(data['close'].values, 1)
-            data['p_change'].values[np.isnan(data['p_change'].values)] = 0.0
             data["volume"] = data['volume'].values.astype('double') * 100  # 成交量单位从手变成股。
         return data
     except Exception as e:
